@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vote – SecureVote</title>
+
+    <style>
+        body {
+            background: #0f172a;
+            font-family: Poppins, sans-serif;
+            color: white;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            background: #1e293b;
+            padding: 25px;
+            border-radius: 16px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .user-box {
+            background: #334155;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .candidates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .candidate {
+            background: #0f172a;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid #00e5ff;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .candidate:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 15px #00e5ff;
+        }
+
+        .candidate img {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 2px solid #00e5ff;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: #00e5ff;
+            border: none;
+            margin-top: 20px;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #03c4db;
+        }
+
+        .disabled {
+            background: gray !important;
+            cursor: not-allowed !important;
+        }
+    </style>
+
+</head>
+<body>
+
+    <div class="container">
+
+        <h2>Vote for Your Candidate</h2>
+
+        <!-- USER INFO -->
+        <div class="user-box">
+            <p><strong>User:</strong> <span id="username">Loading...</span></p>
+            <p><strong>Email:</strong> <span id="email">Loading...</span></p>
+            <p><strong>Vote Status:</strong> <span id="voteStatus">Checking...</span></p>
+        </div>
+
+        <!-- CANDIDATES -->
+        <div class="candidates">
+
+            <div class="candidate" onclick="selectCandidate('Candidate A')">
+                <img src="https://via.placeholder.com/90" alt="">
+                <h3>Candidate A</h3>
+            </div>
+
+            <div class="candidate" onclick="selectCandidate('Candidate B')">
+                <img src="https://via.placeholder.com/90" alt="">
+                <h3>Candidate B</h3>
+            </div>
+
+            <div class="candidate" onclick="selectCandidate('Candidate C')">
+                <img src="https://via.placeholder.com/90" alt="">
+                <h3>Candidate C</h3>
+            </div>
+
+        </div>
+
+        <button id="submitBtn" onclick="submitVote()">Submit Vote</button>
+    </div>
+
+
+<script>
+    let selected = null;
+    let hasVoted = false;
+
+    async function loadUser() {
+        const res = await fetch("/api/user");
+        const data = await res.json();
+
+        if (!data.success) {
+            alert("Not logged in!");
+            window.location.href = "login.html";
+            return;
+        }
+
+        document.getElementById("username").textContent = data.user.name;
+        document.getElementById("email").textContent = data.user.email;
+
+        checkVoteStatus();
+    }
+
+    async function checkVoteStatus() {
+        const res = await fetch("/api/vote/status");
+        const data = await res.json();
+
+        if (data.voted === true) {
+            hasVoted = true;
+            document.getElementById("voteStatus").textContent = "You have already voted ✔";
+            document.getElementById("submitBtn").classList.add("disabled");
+            document.getElementById("submitBtn").disabled = true;
+        } else {
+            document.getElementById("voteStatus").textContent = "You have not voted yet";
+        }
+    }
+
+    function selectCandidate(name) {
+        if (hasVoted) {
+            alert("You cannot vote again.");
+            return;
+        }
+        selected = name;
+        alert("Selected: " + name);
+    }
+
+    async function submitVote() {
+        if (!selected) {
+            alert("Please select a candidate first.");
+            return;
+        }
+
+        const res = await fetch("/api/vote", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ choice: selected })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            alert("Vote submitted successfully!");
+            location.reload();
+        } else {
+            alert(data.message);
+        }
+    }
+
+    loadUser();
+</script>
+
+</body>
+</html>

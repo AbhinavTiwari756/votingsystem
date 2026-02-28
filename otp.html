@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify OTP – SecureVote</title>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Poppins", sans-serif;
+    }
+
+    body {
+      background: #020617;
+      color: white;
+    }
+
+    /* ------------ NAVBAR ------------ */
+    nav {
+      width: 100%;
+      padding: 20px 5%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      z-index: 1000;
+    }
+
+    nav .logo {
+      font-size: 26px;
+      font-weight: 700;
+      color: #00e5ff;
+    }
+
+    nav ul {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: #cbd5e1;
+      transition: 0.3s;
+      font-weight: 500;
+    }
+
+    nav ul li a:hover {
+      color: #00e5ff;
+    }
+
+    /* HAMBURGER */
+    .hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .hamburger span {
+      width: 28px;
+      height: 3px;
+      background: #00e5ff;
+    }
+
+    /* MOBILE MENU */
+    #mobileMenu {
+      display: none;
+      flex-direction: column;
+      background: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(10px);
+      width: 100%;
+      padding: 15px 0;
+      position: fixed;
+      top: 75px;
+      z-index: 999;
+      text-align: center;
+    }
+
+    #mobileMenu a {
+      padding: 12px 0;
+      font-size: 18px;
+      color: white;
+      text-decoration: none;
+      transition: 0.3s;
+    }
+
+    #mobileMenu a:hover {
+      color: #00e5ff;
+    }
+
+    /* ------------ OTP BOX ------------ */
+    .container {
+      max-width: 450px;
+      margin: 150px auto 70px;
+      padding: 30px;
+      text-align: center;
+
+      background: rgba(255,255,255,0.05);
+      border-radius: 18px;
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(0,229,255,0.4);
+      box-shadow: 0 0 25px rgba(0,229,255,0.2);
+    }
+
+    h2 {
+      color: #00e5ff;
+      font-size: 28px;
+      margin-bottom: 10px;
+    }
+
+    p {
+      font-size: 15px;
+      color: #94a3b8;
+      margin-bottom: 15px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      margin: 12px 0;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(0,229,255,0.3);
+      border-radius: 10px;
+      color: white;
+      font-size: 16px;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    input:focus {
+      border-color: #00e5ff;
+      box-shadow: 0 0 10px #00e5ff;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      margin-top: 10px;
+      background: #00e5ff;
+      border: none;
+      color: black;
+      font-size: 17px;
+      font-weight: bold;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background: #03c4db;
+      transform: translateY(-3px);
+      box-shadow: 0 0 15px #00e5ff;
+    }
+
+    hr {
+      margin: 25px 0;
+      border: 0;
+      height: 1px;
+      background: rgba(255,255,255,0.15);
+    }
+
+    #result {
+      margin-top: 10px;
+      color: #38bdf8;
+      font-weight: bold;
+      min-height: 20px;
+    }
+
+    /* ------------ FOOTER ------------ */
+    footer {
+      text-align: center;
+      padding: 18px;
+      background: #0c1324;
+      color: #64748b;
+      margin-top: 30px;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 850px) {
+      nav ul { display: none; }
+      .hamburger { display: flex; }
+    }
+  </style>
+
+  <script>
+    function toggleMenu() {
+      const menu = document.getElementById("mobileMenu");
+      menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+    }
+  </script>
+</head>
+
+<body>
+
+  <!-- NAVBAR -->
+  <nav>
+    <div class="logo">🔐 SecureVote</div>
+
+    <ul>
+      <li><a href="index.html">Home</a></li>
+      <li><a href="#">Security</a></li>
+      <li><a href="#">Help</a></li>
+    </ul>
+
+    <div class="hamburger" onclick="toggleMenu()">
+      <span></span><span></span><span></span>
+    </div>
+  </nav>
+
+  <!-- MOBILE MENU -->
+  <div id="mobileMenu">
+    <a href="index.html">Home</a>
+    <a href="#">Security</a>
+    <a href="#">Help</a>
+  </div>
+
+  <!-- OTP FORM BOX -->
+  <div class="container">
+    <h2>OTP Verification</h2>
+    <p>Enter your phone number to receive OTP</p>
+
+    <!-- Send OTP -->
+    <form id="sendOtpForm">
+      <input type="text" id="phone" placeholder="Enter phone number" required>
+      <button type="submit">Send OTP</button>
+    </form>
+
+    <hr>
+
+    <!-- Verify OTP -->
+    <form id="verifyOtpForm">
+      <input type="text" id="otp" placeholder="Enter OTP" required>
+      <button type="submit">Verify OTP</button>
+    </form>
+
+    <p id="result"></p>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    © 2025 SecureVote | All Rights Reserved
+  </footer>
+
+
+<script>
+  // SEND OTP
+  document.getElementById("sendOtpForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const phone = document.getElementById("phone").value;
+
+    const res = await fetch("/otp/send", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ phone })
+    });
+
+    const data = await res.json();
+    document.getElementById("result").innerText = data.message;
+  });
+
+  // VERIFY OTP
+  document.getElementById("verifyOtpForm").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const otp = document.getElementById("otp").value;
+    const phone = document.getElementById("phone").value;
+
+    const res = await fetch("/otp/verify", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({ phone, otp })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      window.location.href = "/index.html";
+    } else {
+      document.getElementById("result").innerText = data.message;
+    }
+  });
+</script>
+
+</body>
+</html>

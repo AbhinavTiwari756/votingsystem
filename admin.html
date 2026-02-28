@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel – SecureVote</title>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Poppins", sans-serif;
+        }
+
+        body {
+            background: #020617;
+            color: white;
+        }
+
+        /* ------------ NAVBAR ------------ */
+        nav {
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.4);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+        }
+
+        nav .logo {
+            font-size: 26px;
+            font-weight: 700;
+            color: #00e5ff;
+        }
+
+        nav ul {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        nav ul li a {
+            text-decoration: none;
+            color: #cbd5e1;
+            transition: 0.3s;
+            font-weight: 500;
+        }
+
+        nav ul li a:hover {
+            color: #00e5ff;
+        }
+
+        /* HAMBURGER */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 28px;
+            height: 3px;
+            background: #00e5ff;
+            transition: 0.3s;
+        }
+
+        /* MOBILE MENU */
+        #mobileMenu {
+            display: none;
+            flex-direction: column;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            padding: 15px 0;
+            text-align: center;
+            position: fixed;
+            top: 75px;
+            z-index: 999;
+        }
+
+        #mobileMenu a {
+            padding: 12px 0;
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            transition: 0.3s;
+        }
+
+        #mobileMenu a:hover {
+            color: #00e5ff;
+        }
+
+        /* ------------ ADMIN LOGIN BOX ------------ */
+        #loginBox {
+            max-width: 450px;
+            margin: 150px auto;
+            padding: 35px;
+            text-align: center;
+
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(0,229,255,0.4);
+            border-radius: 18px;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 0 25px rgba(0,229,255,0.2);
+        }
+
+        h2 {
+            font-size: 28px;
+            color: #00e5ff;
+            margin-bottom: 18px;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            margin: 12px 0;
+            border-radius: 10px;
+            border: 1px solid rgba(0,229,255,0.3);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #00e5ff;
+            box-shadow: 0 0 10px #00e5ff;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #00e5ff;
+            color: black;
+            border: none;
+            border-radius: 50px;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #03c4db;
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px #00e5ff;
+        }
+
+        /* ------------ DASHBOARD ------------ */
+        #dashboard {
+            max-width: 1100px;
+            margin: 150px auto 60px;
+            padding: 20px;
+            display: none;
+        }
+
+        #dashboard h2 {
+            text-align: center;
+            color: #00e5ff;
+            margin-bottom: 20px;
+        }
+
+        #dashboard button {
+            width: auto;
+            padding: 10px 25px;
+            margin: 10px 10px 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        table th {
+            background: #0f172a;
+            padding: 12px;
+            text-align: left;
+            color: #00e5ff;
+        }
+
+        table td {
+            background: rgba(255,255,255,0.05);
+            padding: 12px;
+            color: white;
+            border-bottom: 1px solid rgba(0,229,255,0.1);
+        }
+
+        .delete-btn {
+            padding: 7px 12px;
+            background: red;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .delete-btn:hover {
+            background: darkred;
+        }
+
+        /* ------------ FOOTER ------------ */
+        footer {
+            text-align: center;
+            padding: 20px;
+            background: #0c1324;
+            color: #64748b;
+            margin-top: 50px;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 850px) {
+            nav ul { display: none; }
+            .hamburger { display: flex; }
+        }
+    </style>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById("mobileMenu");
+            menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+        }
+    </script>
+
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <nav>
+        <div class="logo">🔐 SecureVote Admin</div>
+
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="#">Security</a></li>
+            <li><a href="#">Docs</a></li>
+        </ul>
+
+        <div class="hamburger" onclick="toggleMenu()">
+            <span></span><span></span><span></span>
+        </div>
+    </nav>
+
+    <!-- MOBILE MENU -->
+    <div id="mobileMenu">
+        <a href="/">Home</a>
+        <a href="#">Security</a>
+        <a href="#">Docs</a>
+    </div>
+
+
+
+    <!-- ================= ADMIN LOGIN ================= -->
+    <div class="container" id="loginBox">
+        <h2>Admin Login</h2>
+
+        <input type="text" id="adminUser" placeholder="Enter Admin Username">
+        <input type="password" id="adminPass" placeholder="Enter Admin Password">
+
+        <button onclick="adminLogin()">Login</button>
+    </div>
+
+
+
+    <!-- ================= ADMIN DASHBOARD ================= -->
+    <div id="dashboard">
+        <h2>Admin Dashboard</h2>
+
+        <button onclick="loadUsers()">Load All Users</button>
+        <button onclick="loadVotes()">Load Votes</button>
+
+        <h3 style="color:#00e5ff; margin-top:25px;">Users</h3>
+        <table id="usersTable">
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Face Stored</th>
+                <th>Action</th>
+            </tr>
+        </table>
+
+        <h3 style="color:#00e5ff; margin-top:35px;">Votes</h3>
+        <table id="votesTable">
+            <tr>
+                <th>User</th>
+                <th>Vote</th>
+                <th>Time</th>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- FOOTER -->
+    <footer>
+        © 2025 SecureVote Admin | All Rights Reserved
+    </footer>
+
+
+
+<script>
+    async function adminLogin() {
+        const username = document.getElementById("adminUser").value;
+        const password = document.getElementById("adminPass").value;
+
+        const res = await fetch("/api/admin/login", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ username, password })
+        });
+
+        const data = await res.json();
+
+        if (data.success) {
+            document.getElementById("loginBox").style.display = "none";
+            document.getElementById("dashboard").style.display = "block";
+        } else {
+            alert("Invalid admin credentials");
+        }
+    }
+
+    async function loadUsers() {
+        const res = await fetch("/api/admin/users");
+        const users = await res.json();
+
+        const table = document.getElementById("usersTable");
+
+        table.innerHTML = `
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Face Stored</th>
+                <th>Action</th>
+            </tr>
+        `;
+
+        users.forEach(u => {
+            table.innerHTML += `
+                <tr>
+                    <td>${u.name}</td>
+                    <td>${u.email}</td>
+                    <td>${u.faceStored ? "YES" : "NO"}</td>
+                    <td><button class="delete-btn" onclick="deleteUser('${u._id}')">Delete</button></td>
+                </tr>
+            `;
+        });
+    }
+
+    async function deleteUser(id) {
+        if (!confirm("Are you sure?")) return;
+
+        const res = await fetch(`/api/admin/delete-user/${id}`, { method: "DELETE" });
+        const data = await res.json();
+
+        if (data.success) {
+            alert("User deleted");
+            loadUsers();
+        }
+    }
+
+    async function loadVotes() {
+        const res = await fetch("/api/admin/votes");
+        const votes = await res.json();
+
+        const table = document.getElementById("votesTable");
+
+        table.innerHTML = `
+            <tr>
+                <th>User</th>
+                <th>Vote</th>
+                <th>Time</th>
+            </tr>
+        `;
+
+        votes.forEach(v => {
+            table.innerHTML += `
+                <tr>
+                    <td>${v.user}</td>
+                    <td>${v.choice}</td>
+                    <td>${new Date(v.time).toLocaleString()}</td>
+                </tr>
+            `;
+        });
+    }
+</script>
+
+</body>
+</html>
